@@ -1,0 +1,83 @@
+import tkinter as tk
+from tkinter import ttk
+import ttkbootstrap as tb
+import random
+
+
+def simulate_free_throws():
+    try:
+        sft_n = int(sft_num.get())
+        sft_d = int(sft_den.get())
+        tft_n = int(tft_num.get())
+        tft_d = int(tft_den.get())
+        ftm_n = int(ftm_num.get())
+        ftm_d = int(ftm_den.get())
+        
+        sft_percentage = sft_n / sft_d
+        tft_percentage = tft_n / tft_d
+        ftm_percentage = ftm_n / ftm_d
+        
+        attempts = sft_d
+        made = sft_n
+        percentages = [sft_percentage * 100]
+        
+        while (made / attempts) <= tft_percentage:
+            attempts += 1
+            num = random.random()
+
+            if num < ftm_percentage:
+                made += 1
+            percentages.append((made / attempts) * 100)
+        
+        output_label.config(text=f"Last three percentages: \n{percentages[-3]:.2f}%, {percentages[-2]:.2f}%, {percentages[-1]:.2f}%")
+    except ValueError:
+        output_label.config(text="Please enter valid numbers.")
+
+def on_enter_pressed(event):
+    # You can call the simulate function here, or trigger any other desired action
+    simulate_free_throws()
+
+# Create the main window
+root = tb.Window(themename="flatly")
+root.title("Free Throw Simulator")
+root.geometry("500x400")
+
+frame = ttk.Frame(root, padding=20)
+frame.grid(row=0, column=0)
+
+ttk.Label(frame, text="Starting Free Throw (SFT)").grid(row=0, column=0, columnspan=3)
+sft_num = ttk.Entry(frame, width=5)
+sft_num.grid(row=1, column=0)
+sft_num.focus()
+
+ttk.Label(frame, text="/", font=("Arial", 14, "bold")).grid(row=1, column=1)
+
+sft_den = ttk.Entry(frame, width=5)
+sft_den.grid(row=1, column=2)
+
+ttk.Label(frame, text="Target Free Throw (TFT)").grid(row=2, column=0, columnspan=3)
+tft_num = ttk.Entry(frame, width=5)
+tft_num.grid(row=3, column=0)
+
+ttk.Label(frame, text="/", font=("Arial", 14, "bold")).grid(row=3, column=1)
+
+tft_den = ttk.Entry(frame, width=5)
+tft_den.grid(row=3, column=2)
+
+ttk.Label(frame, text="Free Throw Make (FTM)").grid(row=4, column=0, columnspan=3)
+ftm_num = ttk.Entry(frame, width=5)
+ftm_num.grid(row=5, column=0)
+
+ttk.Label(frame, text="/", font=("Arial", 14, "bold")).grid(row=5, column=1)
+
+ftm_den = ttk.Entry(frame, width=5)
+ftm_den.grid(row=5, column=2)
+ftm_den.bind("<Return>", on_enter_pressed)
+
+simulate_button = ttk.Button(frame, text="Simulate", command=simulate_free_throws, bootstyle="primary")
+simulate_button.grid(row=6, column=0, columnspan=2, pady=10)
+
+output_label = ttk.Label(frame, text="", font=("normal", 14, "bold"))
+output_label.grid(row=7, column=0, columnspan=3)
+
+root.mainloop()
